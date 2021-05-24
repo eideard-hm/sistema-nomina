@@ -186,6 +186,4 @@ const btnAccion = e => {
             }
         })
     }
-
-    e.stopPropagation();
 }
