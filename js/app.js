@@ -1,11 +1,9 @@
 const form = document.querySelector('#form');
 const formEdit = document.querySelector('#formEdit');
 const inputs = document.querySelectorAll('#form input');
-// const inputsEdit = document.querySelectorAll('#formEdit input');
+const inputsEdit = document.querySelectorAll('#formEdit input');
 let mostrarDatos = document.getElementById('fila-mostrar-datos');
-let guardarInformacion = []
-let salario, salud, pension, totalDevengado, totalDescuentos, valorNeto;
-let aTransporte = 106454;
+let guardarInformacion = [];
 
 //expresiones regualares para validar la información introducida en los campos
 const expresiones = {
@@ -66,9 +64,9 @@ addEventListener('DOMContentLoaded', () => {
     mostrarVectores();
 });
 
-const validarFormulario = (e) => {
+const validarFormulario = (e, accion) => {
     switch (e.target.name) {
-        case 'txtNombre':
+        case `txt${accion}Nombre`:
             if (expresiones.nombre.test(e.target.value)) {
                 campos['nombre'] = true;
             } else {
@@ -76,7 +74,7 @@ const validarFormulario = (e) => {
             }
             break;
 
-        case 'txtApellido':
+        case `txt${accion}Apellido`:
             if (expresiones.nombre.test(e.target.value)) {
                 campos['apellidos'] = true;
             } else {
@@ -84,7 +82,7 @@ const validarFormulario = (e) => {
             }
             break;
 
-        case 'txtNumDoc':
+        case `txt${accion}NumDoc`:
             if (expresiones.telefono.test(parseInt(e.target.value))) {
                 campos['numDoc'] = true;
             } else {
@@ -92,7 +90,7 @@ const validarFormulario = (e) => {
             }
             break;
 
-        case 'txtDiasTrabajados':
+        case `txt${accion}DiasTrabajados`:
             if (expresiones.telefono.test(parseInt(e.target.value))) {
                 campos['diasTrabajados'] = true;
             } else {
@@ -100,7 +98,7 @@ const validarFormulario = (e) => {
             }
             break;
 
-        case 'txtSueldo':
+        case `txt${accion}Sueldo`:
             if (expresiones.telefono.test(parseInt(e.target.value))) {
                 campos['sueldo'] = true;
             } else {
@@ -113,20 +111,25 @@ const validarFormulario = (e) => {
 //les vamos a agregar un evento a cada uno de los inputs del formulario
 inputs.forEach(input => {
     // input.addEventListener('keyup', validarFormulario)
-    input.addEventListener('blur', validarFormulario);
+    input.addEventListener('blur', (e) => validarFormulario(e, 'Regis'));
+})
+
+inputsEdit.forEach(input => {
+    // input.addEventListener('keyup', validarFormulario)
+    input.addEventListener('blur', (e) => validarFormulario(e, 'Edit'));
 })
 
 form.addEventListener('submit', e => {
     e.preventDefault();
-    cargarVectores();
+    fcCargarVectores(null, null, 'Regis');
 });
 
 formEdit.addEventListener('submit', e => {
     e.preventDefault();
     guardarInformacion.find(element => {
-        if (element.numDoc === e.target[2].value) {
+        if (element.id === parseInt(e.target[0].value)) {
             let i = guardarInformacion.indexOf(element);
-            cargarVectoresEditar(element.id, i);
+            fcCargarVectores(element.id, i, 'Edit');
         }
     });
 })
@@ -135,12 +138,15 @@ mostrarDatos.addEventListener('click', e => {
     btnAccion(e);
 });
 
-const cargarVectores = () => {
-    const nombre = document.getElementById('txtNombre');
-    let apellido = document.getElementById('txtApellido');
-    const numDoc = document.getElementById('txtNumDoc');
-    let diasTrabajados = parseInt(document.getElementById('txtDiasTrabajados').value);
-    let sueldo = parseFloat(document.getElementById('txtSueldo').value);
+const fcCargarVectores = (id, index, accion) => {
+    const nombre = document.getElementById(`txt${accion}Nombre`);
+    let apellido = document.getElementById(`txt${accion}Apellido`);
+    const numDoc = document.getElementById(`txt${accion}NumDoc`);
+    let diasTrabajados = parseInt(document.getElementById(`txt${accion}DiasTrabajados`).value);
+    let sueldo = parseFloat(document.getElementById(`txt${accion}Sueldo`).value);
+
+    let salario = 0, salud = 0, pension = 0, totalDevengado = 0, totalDescuentos = 0, valorNeto = 0;
+    let aTransporte = 106454;
 
     if (campos.nombre === false || campos.apellidos === false || campos.numDoc === false
         || campos.diasTrabajados === false || campos.sueldo === false) {
@@ -188,90 +194,55 @@ const cargarVectores = () => {
         totalDescuentos = formatterPeso.format(totalDescuentos);
         valorNeto = formatterPeso.format(valorNeto);
 
-        //crear el objeto que vamos a almacenar
-        const valores = {
-            id: Date.now(),
-            nombre: nombre.value.trim(),
-            apellido: apellido.value.trim(),
-            numDoc: numDoc.value.trim(),
-            diasTrabajados,
-            sueldo,
-            salario,
-            aTransporte,
-            totalDevengado,
-            salud,
-            pension,
-            totalDescuentos,
-            valorNeto
-        }
-        //vamos a insertar los valores dentro del arreglo 
-        guardarInformacion.push({ ...valores });
-        form.reset();
-        window.location.reload();
-        mostrarVectores();
-    }
-}
-
-/*
- * Función para editar
-*/
-
-const cargarVectoresEditar = (id, index) => {
-    const data = new FormData(formEdit);
-    let diasTrabajados = parseInt(data.get('txtEditDiasTrabajados'));
-    let sueldo = parseFloat(data.get('txtEditSueldo'));
-    if (data.get('txtEditNombre').trim() !== '' || data.get('txtEditApellido').trim() !== ''
-        || data.get('txtEditNumDoc').trim() !== '' || data.get('txtEditDiasTrabajados') !== '' || data.get('txtEditSueldo') !== '') {
-        //operaciones
-        salario = ((sueldo / 30) * diasTrabajados);
-        aTransporte = sueldo <= 1817052 ? aTransporte : aTransporte = 0;
-        totalDevengado = (salario + aTransporte);
-        //descuentos
-        salud = ((totalDevengado - aTransporte) * 0.04);
-        pension = ((totalDevengado - aTransporte) * 0.04);
-        totalDescuentos = (salud + pension);
-
-        //valor neto
-        valorNeto = (totalDevengado - totalDescuentos);
-        /*
-         * Darle formato de número a moneda
-        */
-        const formatterPeso = new Intl.NumberFormat('es-CO', {
-            style: 'currency',
-            currency: 'COP',
-            minimumFractionDigits: 0
-        })
-        salario = formatterPeso.format(salario);
-        aTransporte = formatterPeso.format(aTransporte);
-        totalDevengado = formatterPeso.format(totalDevengado);
-        salud = formatterPeso.format(salud);
-        pension = formatterPeso.format(pension);
-        totalDescuentos = formatterPeso.format(totalDescuentos);
-        valorNeto = formatterPeso.format(valorNeto);
-
-        //crear el objeto que vamos a almacenar
-        const objetoSobreescrito = {
-            id: id,
-            nombre: data.get('txtEditNombre').trim(),
-            apellido: data.get('txtEditApellido').trim(),
-            numDoc: data.get('txtEditNumDoc').trim(),
-            diasTrabajados,
-            sueldo,
-            salario,
-            aTransporte,
-            totalDevengado,
-            salud,
-            pension,
-            totalDescuentos,
-            valorNeto
-        }
-        //vamos a insertar los valores dentro del arreglo 
-        if (index !== -1) {
-            guardarInformacion.splice(index, 1);
-            guardarInformacion.push(objetoSobreescrito);
-            form.reset();
-            window.location.reload();
+        if (accion === 'Regis') {
+            //crear el objeto que vamos a almacenar
+            const valores = {
+                id: Date.now(),
+                nombre: nombre.value.trim(),
+                apellido: apellido.value.trim(),
+                numDoc: numDoc.value.trim(),
+                diasTrabajados,
+                sueldo,
+                salario,
+                aTransporte,
+                totalDevengado,
+                salud,
+                pension,
+                totalDescuentos,
+                valorNeto
+            }
+            //vamos a insertar los valores dentro del arreglo 
+            guardarInformacion.push({ ...valores });
+            swal("Registro guardado correctamente!", `Se ha hecho el registro correcto de la persona ${valores.nombre} ${valores.apellido} :)`, "success");
             mostrarVectores();
+            window.location.reload();
+        } else if (accion === 'Edit') {
+            //crear el objeto que vamos a almacenar
+            const objetoSobreescrito = {
+                id: id,
+                nombre: nombre.value.trim(),
+                apellido: apellido.value.trim(),
+                numDoc: numDoc.value.trim(),
+                diasTrabajados,
+                sueldo,
+                salario,
+                aTransporte,
+                totalDevengado,
+                salud,
+                pension,
+                totalDescuentos,
+                valorNeto
+            }
+            //vamos a insertar los valores dentro del arreglo 
+            if (index !== -1) {
+                guardarInformacion.splice(index, 1);
+                guardarInformacion.push(objetoSobreescrito);
+                swal("Modificación exitosa!", `La información de la persona ${objetoSobreescrito.nombre} ${objetoSobreescrito.apellido} ha sido modificado exitosamente !`, "success");
+                mostrarVectores();
+                window.location.reload();
+            }
+        } else {
+            swal("Error en el servidor!", "Ha ocurrido un error en el servidor. Por favor intente más tarde :(", "error");
         }
     }
 }
@@ -319,6 +290,7 @@ const btnAccion = e => {
     if (e.target.classList.contains('btnEditar')) {
         guardarInformacion.find(element => {
             if (element.id === parseInt(e.target.dataset.id)) {
+                document.getElementById('txtEditId').value = element.id;
                 document.getElementById('txtEditNombre').value = element.nombre;
                 document.getElementById('txtEditApellido').value = element.apellido;
                 document.getElementById('txtEditNumDoc').value = element.numDoc;
