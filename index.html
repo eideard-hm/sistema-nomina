@@ -6,6 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sistema de nóminas</title>
+  <link rel="shortcut icon" href="img/Logo programa.ico" type="image/x-icon">
   <!-- Datatables -->
   <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.0/css/buttons.dataTables.min.css">
   <link href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
@@ -13,6 +14,7 @@
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous" />
+  <link rel="stylesheet" href="css/estilos.css">
 </head>
 
 <body>
@@ -30,116 +32,293 @@
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="desarrolladores.html">Desarrolladores</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-              aria-expanded="false">
-              Dropdown
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li>
-                <hr class="dropdown-divider">
-              </li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
-            </ul>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-          </li>
         </ul>
         <form class="d-flex">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Search</button>
+          <span class="badge bg-light text-dark" role="button">
+            <a class="nav-link" href="login.html">Cerrrar sesión</a></span>
         </form>
       </div>
     </div>
   </nav>
 
   <div class="container mt-2">
-    <h1 class="text-center">Sistema de calcular nóminas</h1>
+    <h1 class="text-center titulo">Sistema de calcular nóminas</h1>
+    <hr>
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-warning my-3" data-bs-toggle="modal" data-bs-target="#agregar_nomina">
       Nuevo<i class="fas fa-plus-circle ms-1"></i>
     </button>
-    <table id="example" class="table table-dark table-striped display responsive nowrap" style="width:100%">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nombre completo</th>
-          <th>N° Doc</th>
-          <th>D. Trabajados</th>
-          <th>Salario</th>
-          <th>A. Transporte</th>
-          <th>S. Devengos</th>
-          <th>Salud</th>
-          <th>Pensión</th>
-          <th>S. Descuentos</th>
-          <th>Valor Neto</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody id="fila-mostrar-datos">
-      </tbody>
-      <tfoot>
-        <tr>
-          <th>ID</th>
-          <th>Nombre completo</th>
-          <th>N° Doc</th>
-          <th>D. Trabajados</th>
-          <th>Salario</th>
-          <th>A. Transporte</th>
-          <th>S. Devengos</th>
-          <th>Salud</th>
-          <th>Pensión</th>
-          <th>S. Descuentos</th>
-          <th>Valor Neto</th>
-          <th>Acción</th>
-        </tr>
-      </tfoot>
-    </table>
+    <div id="exportar-pdf">
+      <div class="col-md-12 m-3 d-flex justify-content-around align-items-center">
+        <img src="img/trabajador.jpg" width="180px" height="180px" class="rounded float-start col-md6"
+          alt="Imagen del empleado">
+        <ul class="list-group list-group-flush col-md-6 fs-5">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Nombre trabajador:
+            <span class="badge bg-primary rounded-pill">Edier Heraldo</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Apellidos trabajador:
+            <span class="badge bg-primary rounded-pill">Hernandez Molano</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Número de documento:
+            <span class="badge bg-primary rounded-pill">1055550018</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Días trabajados:
+            <span class="badge bg-primary rounded-pill">30</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Sueldo:
+            <span class="badge bg-primary rounded-pill">908526</span>
+          </li>
+        </ul>
+      </div>
+      <hr>
+      <div class="col-md-12 d-flex justify-content-between align-items-center">
+        <div class="col-md-5">
+          <h5 class="text-center"><b>Devengado</b></h5>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Sueldo básico</th>
+                <td>942500</td>
+              </tr>
+              <tr>
+                <th scope="row">Comisiones</th>
+                <td>942500</td>
+              </tr>
+              <tr>
+                <th scope="row">Horas extras</th>
+                <td>12</td>
+              </tr>
+              <tr>
+                <th scope="row">Recargos nocturnos</th>
+                <td>942500</td>
+              </tr>
+              <tr>
+                <th scope="row">Recargos dominicales y festivo</th>
+                <td>942500</td>
+              </tr>
+              <tr>
+                <th scope="row">Auxilio de transporte</th>
+                <td>942500</td>
+              </tr>
+              <tr class="bg-info fw-bold">
+                <th scope="row">Total devengado:</th>
+                <td>942500</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-md-5">
+          <h5 class="text-center"><b>Apropiaciones de nómina</b></h5>
+          <h6 class="text-center"><b>Seguridad social</b></h6>
+          <table class="table table-dark table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Salud (8.5%)</th>
+                <td>123</td>
+              </tr>
+              <tr>
+                <th scope="row">Pensión (16%)</th>
+                <td>123</td>
+              </tr>
+              <tr class="bg-warning fw-bold">
+                <th scope="row">ARL (0.522% - 6.960%):</th>
+                <td>942500</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-md-12 d-flex justify-content-between">
+        <div class="col-md-5">
+          <h5 class="text-center"><b>Deducciones</b></h5>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Aportes a salud (4%)</th>
+                <td>12344</td>
+              </tr>
+              <tr>
+                <th scope="row">Aportes a pensión (4%)</th>
+                <td>12344</td>
+              </tr>
+              <tr>
+                <th scope="row">Libranza</th>
+                <td>12344</td>
+              </tr>
+              <tr>
+                <th scope="row">Embargos judiciales</th>
+                <td>12344</td>
+              </tr>
+              <tr>
+                <th scope="row">Cuotas sindicatos</th>
+                <td>12344</td>
+              </tr>
+              <tr>
+                <th scope="row">Créditos o deudas con el empleador</th>
+                <td>12344</td>
+              </tr>
+              <tr class="bg-info fw-bold">
+                <th scope="row">Total:</th>
+                <td>12344</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-md-5">
+          <h5 class="text-center"><b>Aportes parafiscales</b></h5>
+          <table class="table table-dark table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Sena (2%)</th>
+                <td>12443</td>
+              </tr>
+              <tr>
+                <th scope="row">ICBF (3%)</th>
+                <td>12443</td>
+              </tr>
+              <tr>
+                <th scope="row">Caja de compensación familiar (4%)</th>
+                <td colspan="2">12443</td>
+              </tr>
+              <tr class="bg-light fw-bold">
+                <th scope="row">Total:</th>
+                <td colspan="2">12443</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-md-12 d-flex justify-content-between">
+        <div class="col-md-5">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center bg-primary fs-5">
+              <b>Neto a pagar:</b>
+              <span class="badge bg-primary rounded-pill">Edier Heraldo</span>
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-5">
+          <h5 class="text-center"><b>Prestacione sociales</b></h5>
+          <table class="table table-dark table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Prima de servicios (8.33%)</th>
+                <td>1233</td>
+              </tr>
+              <tr>
+                <th scope="row">Cesantías (8.33%)</th>
+                <td>1233</td>
+              </tr>
+              <tr>
+                <th scope="row">Intereses sobre las cesantías (12%)</th>
+                <td colspan="2">13444</td>
+              </tr>
+              <tr>
+                <th scope="row">Vacaciones (4.17%)</th>
+                <td colspan="2">13444</td>
+              </tr>
+              <tr class="bg-info fw-bold">
+                <th scope="row">Total:</th>
+                <td colspan="2">13444</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-md-12 d-flex justify-content-between">
+        <div class="col-md-5">
+        </div>
+        <div class="col-md-5">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center bg-primary fs-5">
+              <b>Neto a pagar:</b>
+              <span class="badge bg-primary rounded-pill">Edier Heraldo</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-12 m-3">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between align-items-center bg-danger fs-4">
+            <b>Total:</b>
+            <span class="badge bg-primary rounded-pill">Edier Heraldo</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="agregar_nomina" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-      aria-labelledby="staticBackdropLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header bg-primary">
-            <h5 class="modal-title" id="staticBackdropLabel">Registrar nómina</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form class="row g-3" id="form">
-              <div class="col-md-6">
-                <label for="txtNombre" class="form-label">Nombre:</label>
-                <input type="text" class="form-control" name="txtRegisNombre" id="txtRegisNombre" placeholder="Jhon">
-              </div>
-              <div class="col-md-6">
-                <label for="txtApellido" class="form-label">Apellido:</label>
-                <input type="text" class="form-control" name="txtRegisApellido" id="txtRegisApellido"
-                  placeholder="Azaustre">
-              </div>
-              <div class="col-md-12">
-                <label for="txtNumDoc" class="form-label">N° Documento:</label>
-                <input type="number" class="form-control" name="txtRegisNumDoc" id="txtRegisNumDoc"
-                  placeholder="123455543">
-              </div>
-              <div class="col-md-6">
-                <label for="txtDiasTrabajados" class="form-label">Días trabajados:</label>
-                <input type="number" class="form-control" name="txtRegisDiasTrabajados" id="txtRegisDiasTrabajados"
-                  placeholder="30">
-              </div>
-              <div class="col-md-6">
-                <label for="txtSueldo" class="form-label">Sueldo</label>
-                <input type="number" class="form-control" name="txtRegisSueldo" id="txtRegisSueldo"
-                  placeholder="908526">
-              </div>
-              <button type="submit" class="btn btn-primary">Guardar <i class="far fa-save ms-1"></i></button>
-            </form>
-          </div>
+  <!-- Modal -->
+  <div class="modal fade" id="agregar_nomina" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-primary">
+          <h5 class="modal-title" id="staticBackdropLabel">Registrar nómina</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form class="row g-3" id="form">
+            <div class="col-md-6">
+              <label for="txtNombre" class="form-label">Nombre:</label>
+              <input type="text" class="form-control" name="txtRegisNombre" id="txtRegisNombre" placeholder="Jhon">
+            </div>
+            <div class="col-md-6">
+              <label for="txtApellido" class="form-label">Apellido:</label>
+              <input type="text" class="form-control" name="txtRegisApellido" id="txtRegisApellido"
+                placeholder="Azaustre">
+            </div>
+            <div class="col-md-12">
+              <label for="txtNumDoc" class="form-label">N° Documento:</label>
+              <input type="number" class="form-control" name="txtRegisNumDoc" id="txtRegisNumDoc"
+                placeholder="123455543">
+            </div>
+            <div class="col-md-6">
+              <label for="txtDiasTrabajados" class="form-label">Días trabajados:</label>
+              <input type="number" class="form-control" name="txtRegisDiasTrabajados" id="txtRegisDiasTrabajados"
+                placeholder="30">
+            </div>
+            <div class="col-md-6">
+              <label for="txtSueldo" class="form-label">Sueldo</label>
+              <input type="number" class="form-control" name="txtRegisSueldo" id="txtRegisSueldo" placeholder="908526">
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar <i class="far fa-save ms-1"></i></button>
+          </form>
         </div>
       </div>
     </div>
@@ -200,7 +379,7 @@
   <script
     src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.24/b-1.7.0/b-html5-1.7.0/b-print-1.7.0/datatables.min.js"></script>
   <script src="https://kit.fontawesome.com/ff77c957bf.js" crossorigin="anonymous"></script>
-  <script src="js/app.js"></script>
+  <!-- <script src="js/app.js"></script> -->
 </body>
 
 </html>
