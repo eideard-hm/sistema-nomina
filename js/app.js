@@ -2,13 +2,15 @@ const form = document.querySelector('#form');
 const formEdit = document.querySelector('#formEdit');
 const inputs = document.querySelectorAll('#form input');
 const inputsEdit = document.querySelectorAll('#formEdit input');
-let mostrarDatos = document.getElementById('fila-mostrar-datos');
 let guardarInformacion = [];
+let informacionNomina = [];
 
 //expresiones regualares para validar la información introducida en los campos
 const expresiones = {
     nombre: /^[a-zA-ZÀ-ÿ\s]{3,50}$/, // Letras y espacios, pueden llevar acentos.    
     telefono: /^\d{1,10}$/, // 1 a 10 numeros.
+    horas: /^\d{1,5}$/,
+    numerosDeci: /^\d*\.?\d*$/
 }
 
 const campos = {
@@ -16,53 +18,39 @@ const campos = {
     apellidos: false,
     numDoc: false,
     diasTrabajados: false,
-    sueldo: false
+    sueldo: false,
+    horasDiurnas: false,
+    horasNocturnas: false,
+    horasDominicalesDiur: false,
+    horasDominicalesNoc: false,
+    libranza: false,
+    embargosJud: false,
+    sindicatos: false,
+    deudas: false,
+    nivelArl: false
 }
 
 addEventListener('DOMContentLoaded', () => {
-    $(document).ready(function () {
-        $('#example').DataTable({
-            language: {
-                "sProcessing": "Procesando...",
-                "sLengthMenu": "Mostrar _MENU_ registros",
-                "sZeroRecords": "No se encontraron resultados",
-                "sEmptyTable": "Ningún dato disponible en esta tabla =(",
-                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                "sInfoPostFix": "",
-                "sSearch": "Buscar:",
-                "sUrl": "",
-                "sInfoThousands": ",",
-                "sLoadingRecords": "Cargando...",
-                "oPaginate": {
-                    "sFirst": "Primero",
-                    "sLast": "Último",
-                    "sNext": "Siguiente",
-                    "sPrevious": "Anterior"
-                },
-                "oAria": {
-                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                },
-                "buttons": {
-                    "copy": "Copiar",
-                    "colvis": "Visibilidad"
-                }
-            },
-            //para usar los botones   
-            responsive: true,
-            dom: 'Bfrtip',
-            buttons: [
-                'excel', 'copy', 'pdf'
-            ]
-        });
-    });
     if (localStorage.getItem('nomina')) {
         guardarInformacion = JSON.parse(localStorage.getItem('nomina'));
     }
+    permisosBotones();
     mostrarVectores();
 });
+
+const permisosBotones = () => {
+    if (guardarInformacion.length === 0) {
+        document.querySelector('.btn-agregar').removeAttribute('disabled');
+        document.querySelector('.btn-editar').setAttribute('disabled', 'disabled');
+        document.querySelector('.btn-eliminar').setAttribute('disabled', 'disabled');
+        document.querySelector('.btn-nueva-nomina').setAttribute('disabled', 'disabled');
+    } else {
+        document.querySelector('.btn-agregar').setAttribute('disabled', 'disabled');
+        document.querySelector('.btn-editar').removeAttribute('disabled');
+        document.querySelector('.btn-eliminar').removeAttribute('disabled');
+        document.querySelector('.btn-nueva-nomina').removeAttribute('disabled');
+    }
+}
 
 const validarFormulario = (e, accion) => {
     switch (e.target.name) {
@@ -105,6 +93,78 @@ const validarFormulario = (e, accion) => {
                 swal("Dato incorrecto!", "El valor introducido en el campo días sueldo es incorrecto. El valor ingresado debe ser un número entero mayor a cero. Intente nuevamente.", "error");
             }
             break;
+        /** */
+        case `txt${accion}HorasDiurnas`:
+            if (expresiones.horas.test(parseInt(e.target.value))) {
+                campos['horasDiurnas'] = true;
+            } else {
+                swal("Dato incorrecto!", "El valor introducido en el campo horas extras diurnas es incorrecto. El valor ingresado debe ser un número entero mayor a cero. Intente nuevamente.", "error");
+            }
+            break;
+
+        case `txt${accion}HorasNocturnas`:
+            if (expresiones.horas.test(parseInt(e.target.value))) {
+                campos['horasNocturnas'] = true;
+            } else {
+                swal("Dato incorrecto!", "El valor introducido en el campo horas extras nocturnas es incorrecto. El valor ingresado debe ser un número entero mayor a cero. Intente nuevamente.", "error");
+            }
+            break;
+
+        case `txt${accion}HrsDomDiu`:
+            if (expresiones.horas.test(parseInt(e.target.value))) {
+                campos['horasDominicalesDiur'] = true;
+            } else {
+                swal("Dato incorrecto!", "El valor introducido en el campo horas extras dominicales diurnas es incorrecto. El valor ingresado debe ser un número entero mayor a cero. Intente nuevamente.", "error");
+            }
+            break;
+
+        case `txt${accion}HrsDomNoc`:
+            if (expresiones.horas.test(parseInt(e.target.value))) {
+                campos['horasDominicalesNoc'] = true;
+            } else {
+                swal("Dato incorrecto!", "El valor introducido en el campo horas extras dominicales nocturnas es incorrecto. El valor ingresado debe ser un número entero mayor a cero. Intente nuevamente.", "error");
+            }
+            break;
+
+        case `txt${accion}Libranza`:
+            if (expresiones.telefono.test(parseInt(e.target.value))) {
+                campos['libranza'] = true;
+            } else {
+                swal("Dato incorrecto!", "El valor introducido en el campo libranza es incorrecto. El valor ingresado debe ser un número entero mayor a cero. Intente nuevamente.", "error");
+            }
+            break;
+
+        case `txt${accion}EmbargosJ`:
+            if (expresiones.telefono.test(parseInt(e.target.value))) {
+                campos['embargosJud'] = true;
+            } else {
+                swal("Dato incorrecto!", "El valor introducido en el campo embargos judiciales es incorrecto. El valor ingresado debe ser un número entero mayor a cero. Intente nuevamente.", "error");
+            }
+            break;
+
+        case `txt${accion}Sindicatos`:
+            if (expresiones.telefono.test(parseInt(e.target.value))) {
+                campos['sindicatos'] = true;
+            } else {
+                swal("Dato incorrecto!", "El valor introducido en el campo aportes a sindicatos es incorrecto. El valor ingresado debe ser un número entero mayor a cero. Intente nuevamente.", "error");
+            }
+            break;
+
+        case `txt${accion}Deudas`:
+            if (expresiones.telefono.test(parseInt(e.target.value))) {
+                campos['deudas'] = true;
+            } else {
+                swal("Dato incorrecto!", "El valor introducido en el campo deudas es incorrecto. El valor ingresado debe ser un número entero mayor a cero. Intente nuevamente.", "error");
+            }
+            break;
+
+        case `txt${accion}NivelArl`:
+            if (expresiones.numerosDeci.test(parseFloat(e.target.value))) {
+                campos['nivelArl'] = true;
+            } else {
+                swal("Dato incorrecto!", "El valor introducido en el campo nivel ARL es incorrecto. El valor ingresado debe ser un número decimal, el número decimal debe estar separado por un puto 0.00056. Intente nuevamente.", "error");
+            }
+            break;
     }
 }
 
@@ -134,9 +194,18 @@ formEdit.addEventListener('submit', e => {
     });
 })
 
-mostrarDatos.addEventListener('click', e => {
-    btnAccion(e);
+document.querySelectorAll('.btn-crud').forEach(item => {
+    item.addEventListener('click', e => {
+        btnAccion(e);
+    });
 });
+
+document.querySelector('.btn-nueva-nomina').addEventListener('click', () => {
+    guardarInformacion.forEach(item => informacionNomina.push({ ...item }));
+    localStorage.setItem('nomina-antigua', JSON.stringify(informacionNomina));
+    guardarInformacion = [];
+    window.location.reload();
+})
 
 const fcCargarVectores = (id, index, accion) => {
     const nombre = document.getElementById(`txt${accion}Nombre`);
@@ -144,9 +213,27 @@ const fcCargarVectores = (id, index, accion) => {
     const numDoc = document.getElementById(`txt${accion}NumDoc`);
     let diasTrabajados = parseInt(document.getElementById(`txt${accion}DiasTrabajados`).value);
     let sueldo = parseFloat(document.getElementById(`txt${accion}Sueldo`).value);
+    /* */
+    let comisiones = parseFloat(document.getElementById(`txt${accion}Comisiones`).value);
+    let hrsExtDiurnas = parseInt(document.getElementById(`txt${accion}HorasDiurnas`).value);
+    let hrsExtNocturnas = parseInt(document.getElementById(`txt${accion}HorasNocturnas`).value);
+    let hrsExtDominicalesDiu = parseInt(document.getElementById(`txt${accion}HrsDomDiu`).value);
+    let hrsExtDominicalesNoc = parseInt(document.getElementById(`txt${accion}HrsDomNoc`).value);
+    let libranzas = parseFloat(document.getElementById(`txt${accion}Libranza`).value);
+    let embargosJ = parseFloat(document.getElementById(`txt${accion}EmbargosJ`).value);
+    let cuotaSindicatos = parseFloat(document.getElementById(`txt${accion}Sindicatos`).value);
+    let deudasEmpleador = parseFloat(document.getElementById(`txt${accion}Deudas`).value);
+    let nivelArl = parseFloat(document.getElementById(`txt${accion}NivelArl`).value);
 
-    let salario = 0, salud = 0, pension = 0, totalDevengado = 0, totalDescuentos = 0, valorNeto = 0;
+    let salario = 0, salud = 0, pension = 0, totalDevengado = 0, totalDescuentos = 0,
+        netoAPagar = 0, extrasDiurnas = 0, extrasNocturnas = 0, extrasDomiDiu = 0,
+        extrasDomiNoc = 0;
     let aTransporte = 106454;
+    const uvt = 36308;
+    let horaOrdinaria = 3785.53;
+    let saludEmpleador = 0, pensionEmpleador = 0, arlEmpleador = 0, sena = 0, icbf = 0,
+        cajaCompensacion = 0, prima = 0, cesantias = 0, inCesantias = 0, vacaciones = 0, fondoSolidaridad,
+        retencionFuente;
 
     if (campos.nombre === false || campos.apellidos === false || campos.numDoc === false
         || campos.diasTrabajados === false || campos.sueldo === false) {
@@ -166,33 +253,95 @@ const fcCargarVectores = (id, index, accion) => {
         campos['sueldo'] = false;
     }
     if (campos.nombre && campos.apellidos && campos.numDoc && campos.diasTrabajados && campos.sueldo) {
-        //operaciones
+        /*
+          * Valores a pagar por el empleado
+        */
+        /*
+          * Devengado 
+        */
         salario = ((sueldo / 30) * diasTrabajados);
         aTransporte = sueldo <= 1817052 ? aTransporte : aTransporte = 0;
-        totalDevengado = (salario + aTransporte);
-        //descuentos
+        extrasDiurnas = ((horaOrdinaria * 1.25) * hrsExtDiurnas);
+        extrasNocturnas = ((horaOrdinaria * 1.75) * hrsExtNocturnas);
+        extrasDomiDiu = ((horaOrdinaria * 2) * hrsExtDominicalesDiu);
+        extrasDomiNoc = ((horaOrdinaria * 2.5) * hrsExtDominicalesNoc);
+        totalDevengado = (salario + aTransporte + extrasDiurnas + extrasNocturnas +
+            extrasDomiDiu + extrasDomiNoc);
+        /*
+          *Deducido 
+        */
         salud = ((totalDevengado - aTransporte) * 0.04);
         pension = ((totalDevengado - aTransporte) * 0.04);
-        totalDescuentos = (salud + pension);
+        //fondo de solidaridad
+        if (salario < (salario * 4)) {
+            fondoSolidaridad = 0;
+        } else if (salario >= (salario * 4) && salario < (salario * 16)) {
+            fondoSolidaridad = (totalDevengado * 1) / 100;
+        } else if (salario >= (salario * 16) && salario < (salario * 17)) {
+            fondoSolidaridad = (totalDevengado * 1.2) / 100;
+        } else if (salario >= (salario * 17) && salario < (salario * 18)) {
+            fondoSolidaridad = (totalDevengado * 1.4) / 100;
+        } else if (salario >= (salario * 18) && salario < (salario * 19)) {
+            fondoSolidaridad = (totalDevengado * 1.8) / 100;
+        } else if (salario > (salario * 20)) {
+            fondoSolidaridad = (totalDevengado * 2) / 100;
+        }
 
-        //valor neto
-        valorNeto = (totalDevengado - totalDescuentos);
+        //retención en la fuente
+        if (totalDevengado > (uvt * 0) && totalDevengado <= (uvt * 95)) {
+            retencionFuente = 0;
+        } else if (totalDevengado > (uvt * 95) && totalDevengado <= (uvt * 150)) {
+            retencionFuente = (totalDevengado * 19) / 100;
+        } else if (totalDevengado > (uvt * 150) && totalDevengado <= (uvt * 360)) {
+            retencionFuente = (totalDevengado * 28) / 100;
+        } else if (totalDevengado > (uvt * 360) && totalDevengado <= (uvt * 640)) {
+            retencionFuente = (totalDevengado * 33) / 100;
+        } else if (totalDevengado > (uvt * 640) && totalDevengado <= (uvt * 945)) {
+            retencionFuente = (totalDevengado * 35) / 100;
+        } else if (totalDevengado > (uvt * 945 && totalDevengado <= (uvt * 2300))) {
+            retencionFuente = (totalDevengado * 37) / 100;
+        } else if (totalDevengado > (uvt * 2300)) {
+            retencionFuente = (totalDevengado * 39) / 100;
+        }
+        console.log(fondoSolidaridad);
+        console.log(retencionFuente);
+        totalDescuentos = (salud + pension + libranzas + embargosJ + cuotaSindicatos +
+            deudasEmpleador + fondoSolidaridad + retencionFuente);
+        /*
+          * valor neto a pargar al empleado
+        */
+        netoAPagar = (totalDevengado - totalDescuentos);
 
         /*
-         * Darle formato de número a moneda
+         * Valores a pagar por el empleador
         */
-        const formatterPeso = new Intl.NumberFormat('es-CO', {
-            style: 'currency',
-            currency: 'COP',
-            minimumFractionDigits: 0
-        })
-        salario = formatterPeso.format(salario);
-        aTransporte = formatterPeso.format(aTransporte);
-        totalDevengado = formatterPeso.format(totalDevengado);
-        salud = formatterPeso.format(salud);
-        pension = formatterPeso.format(pension);
-        totalDescuentos = formatterPeso.format(totalDescuentos);
-        valorNeto = formatterPeso.format(valorNeto);
+        saludEmpleador = ((totalDevengado - aTransporte) * 0.085);
+        pensionEmpleador = ((totalDevengado - aTransporte) * 0.12);
+        arlEmpleador = ((totalDevengado - aTransporte) * (nivelArl / 100));
+        let totalSeguridadSoc = (saludEmpleador, pensionEmpleador, arlEmpleador);
+        /*
+         * Aportes parafiscales
+        */
+        sena = ((totalDevengado - aTransporte) * 0.02);
+        icbf = ((totalDevengado - aTransporte) * 0.03);
+        cajaCompensacion = ((totalDevengado - aTransporte) * 0.04)
+        let totalParafiscales = (sena, icbf, arlEmpleador);
+        /*
+          * Prestaciones sociales
+        */
+        prima = ((totalDevengado * diasTrabajados) / 360)
+        cesantias = ((totalDevengado * diasTrabajados) / 360)
+        inCesantias = ((cesantias * diasTrabajados * 0.12) / 360);
+        vacaciones = ((salario * diasTrabajados) / 720);
+        let totalPrestaciones = prima + cesantias + inCesantias + vacaciones;
+        /*
+          * Total nómina
+        */
+        let totalApropiaciones = totalSeguridadSoc + totalParafiscales + totalPrestaciones;
+        /*
+          * Total nómina
+        */
+        let totalNomina = totalDevengado + totalSeguridadSoc + totalParafiscales + totalPrestaciones;
 
         if (accion === 'Regis') {
             //crear el objeto que vamos a almacenar
@@ -204,18 +353,53 @@ const fcCargarVectores = (id, index, accion) => {
                 diasTrabajados,
                 sueldo,
                 salario,
+                comisiones,
+                extrasDiurnas,
+                extrasNocturnas,
+                extrasDomiDiu,
+                extrasDomiNoc,
                 aTransporte,
                 totalDevengado,
                 salud,
                 pension,
+                libranzas,
+                embargosJ,
+                cuotaSindicatos,
+                deudasEmpleador,
+                fondoSolidaridad,
+                retencionFuente,
                 totalDescuentos,
-                valorNeto
+                netoAPagar,
+                saludEmpleador,
+                pensionEmpleador,
+                arlEmpleador,
+                totalSeguridadSoc,
+                sena,
+                icbf,
+                cajaCompensacion,
+                totalParafiscales,
+                prima,
+                cesantias,
+                inCesantias,
+                vacaciones,
+                totalPrestaciones,
+                totalApropiaciones,
+                totalNomina,
+                hrsExtDiurnas,
+                hrsExtNocturnas,
+                hrsExtDominicalesDiu,
+                hrsExtDominicalesNoc,
+                nivelArl
             }
             //vamos a insertar los valores dentro del arreglo 
             guardarInformacion.push({ ...valores });
-            swal("Registro guardado correctamente!", `Se ha hecho el registro correcto de la persona ${valores.nombre} ${valores.apellido} :)`, "success");
+            document.getElementById('editar-empleado').dataset.id = valores.id;
+            document.getElementById('eliminar-empleado').dataset.id = valores.id;
+            swal("Registro guardado correctamente!", `Se ha hecho el registro correcto de la persona ${valores.nombre} ${valores.apellido} : )`, "success");
+            $('#agregar_nomina').modal("hide");//nos derigimos a la modal y lo ocultamos
+            form.reset();
             mostrarVectores();
-            window.location.reload();
+            permisosBotones();
         } else if (accion === 'Edit') {
             //crear el objeto que vamos a almacenar
             const objetoSobreescrito = {
@@ -226,20 +410,53 @@ const fcCargarVectores = (id, index, accion) => {
                 diasTrabajados,
                 sueldo,
                 salario,
+                comisiones,
+                extrasDiurnas,
+                extrasNocturnas,
+                extrasDomiDiu,
+                extrasDomiNoc,
                 aTransporte,
                 totalDevengado,
                 salud,
                 pension,
+                libranzas,
+                embargosJ,
+                cuotaSindicatos,
+                deudasEmpleador,
+                fondoSolidaridad,
+                retencionFuente,
                 totalDescuentos,
-                valorNeto
+                netoAPagar,
+                saludEmpleador,
+                pensionEmpleador,
+                arlEmpleador,
+                totalSeguridadSoc,
+                sena,
+                icbf,
+                cajaCompensacion,
+                totalParafiscales,
+                prima,
+                cesantias,
+                inCesantias,
+                vacaciones,
+                totalPrestaciones,
+                totalApropiaciones,
+                totalNomina,
+                hrsExtDiurnas,
+                hrsExtNocturnas,
+                hrsExtDominicalesDiu,
+                hrsExtDominicalesNoc,
+                nivelArl
             }
             //vamos a insertar los valores dentro del arreglo 
             if (index !== -1) {
                 guardarInformacion.splice(index, 1);
                 guardarInformacion.push(objetoSobreescrito);
-                swal("Modificación exitosa!", `La información de la persona ${objetoSobreescrito.nombre} ${objetoSobreescrito.apellido} ha sido modificado exitosamente !`, "success");
+                swal("Modificación exitosa!", `La información de la persona ${objetoSobreescrito.nombre} ${objetoSobreescrito.apellido} ha sido modificado exitosamente!`, "success");
+                $('#editar_nomina').modal("hide");//nos derigimos a la modal y lo ocultamos
+                formEdit.reset();
                 mostrarVectores();
-                window.location.reload();
+                permisosBotones();
             }
         } else {
             swal("Error en el servidor!", "Ha ocurrido un error en el servidor. Por favor intente más tarde :(", "error");
@@ -250,26 +467,77 @@ const fcCargarVectores = (id, index, accion) => {
 const mostrarVectores = () => {
 
     localStorage.setItem('nomina', JSON.stringify(guardarInformacion));
+    /*
+       * Darle formato de número a moneda
+    */
+    const formatterPeso = new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: 'COP',
+        minimumFractionDigits: 0
+    })
 
-    mostrarDatos.innerHTML = '';
     guardarInformacion.forEach(element => {
-        // console.log(element);        
-        mostrarDatos.innerHTML += `
-        <tr>
-          <td>${element.id}</td>
-          <td>${element.nombre} ${element.apellido}</td>
-          <td>${(element.numDoc)}</td>
-          <td>${element.diasTrabajados}</td>
-          <td>${element.salario}</td>
-          <td>${element.aTransporte}</td>
-          <td>${element.totalDevengado}</td>
-          <td>${element.salud}</td>
-          <td>${element.pension}</td>
-          <td>${element.totalDescuentos}</td>
-          <td>${element.valorNeto}</td>
-          <td><span class="fas fa-pen btnEditar" role="button" data-id=${element.id} title="Editar"  data-bs-toggle="modal" data-bs-target="#editar_nomina"></span> | <span class="fas fa-trash" role="button" data-id=${element.id} title="Eliminar"></span></td>
-        </tr>`
-        // console.log(mostrarDatos);
+        //datos personales
+        document.querySelector('#nombre-em').innerHTML = `${element.nombre}`
+        document.querySelector('#apellidos-em').innerHTML = `${element.apellido}`
+        document.querySelector('#numeroDoc-em').innerHTML = `${element.numDoc}`
+        document.querySelector('#dias-em').innerHTML = `${element.diasTrabajados}`
+        document.querySelector('#sueldo-em').innerHTML = `${formatterPeso.format(element.sueldo)}`
+
+        //devengado
+        document.querySelector('#salario').innerHTML = `${formatterPeso.format(element.salario)}`;
+        document.querySelector('#comisiones').innerHTML = `${formatterPeso.format(element.comisiones)}`;
+        document.querySelector('#hed').innerHTML = `${formatterPeso.format(element.extrasDiurnas)}`;
+        document.querySelector('#hen').innerHTML = `${formatterPeso.format(element.extrasNocturnas)}`;
+        document.querySelector('#hedd').innerHTML = `${formatterPeso.format(element.extrasDomiDiu)}`;
+        document.querySelector('#hedn').innerHTML = `${formatterPeso.format(element.extrasDomiNoc)}`;
+        document.querySelector('#aTrasn').innerHTML = `${formatterPeso.format(element.aTransporte)}`;
+        document.querySelector('#totalDev').innerHTML = `${formatterPeso.format(element.totalDevengado)}`;
+
+        //deducidos
+        document.querySelector('#aporSalud').innerHTML = `${formatterPeso.format(element.salud)}`;
+        document.querySelector('#aporPension').innerHTML = `${formatterPeso.format(element.pension)}`;
+        document.querySelector('#libranza').innerHTML = `${formatterPeso.format(element.libranzas)}`;
+        document.querySelector('#embargos').innerHTML = `${formatterPeso.format(element.embargosJ)}`;
+        document.querySelector('#cuotasSindi').innerHTML = `${formatterPeso.format(element.cuotaSindicatos)}`;
+        document.querySelector('#deudas').innerHTML = `${formatterPeso.format(element.deudasEmpleador)}`;
+        document.querySelector('#total-deducido').innerHTML = `${formatterPeso.format(element.totalDescuentos)}`;
+        document.querySelector('#fondo-solidaridad').innerHTML = `${formatterPeso.format(element.fondoSolidaridad)}`;
+        document.querySelector('#retencion-fuente').innerHTML = `${formatterPeso.format(element.retencionFuente)}`;
+
+        //valor neto empleador
+        document.querySelector('#neto-a-pagar').innerHTML = `${formatterPeso.format(element.netoAPagar)}`;
+
+        //Seguridad social
+        document.querySelector('#saludEmpleador').innerHTML = `${formatterPeso.format(element.saludEmpleador)}`;
+        document.querySelector('#pensionEmpleador').innerHTML = `${formatterPeso.format(element.pensionEmpleador)}`;
+        document.querySelector('#arlEmpleador').innerHTML = `${formatterPeso.format(element.arlEmpleador)}`;
+        document.querySelector('#total-seguidad-social').innerHTML = `${formatterPeso.format(element.totalSeguridadSoc)}`;
+
+        //Aportes parafiscales
+        document.querySelector('#sena').innerHTML = `${formatterPeso.format(element.sena)}`;
+        document.querySelector('#icbf').innerHTML = `${formatterPeso.format(element.icbf)}`;
+        document.querySelector('#cajaCompensacion').innerHTML = `${formatterPeso.format(element.cajaCompensacion)}`;
+        document.querySelector('#total-parafiscales').innerHTML = `${formatterPeso.format(element.totalParafiscales)}`;
+
+        //Prestacione sociales
+        document.querySelector('#prima').innerHTML = `${formatterPeso.format(element.prima)}`;
+        document.querySelector('#cesantias').innerHTML = `${formatterPeso.format(element.cesantias)}`;
+        document.querySelector('#intCesantias').innerHTML = `${formatterPeso.format(element.inCesantias)}`;
+        document.querySelector('#vacaciones').innerHTML = `${formatterPeso.format(element.vacaciones)}`;
+        document.querySelector('#total-prestaciones').innerHTML = `${formatterPeso.format(element.totalPrestaciones)}`;
+
+        //total apropiaciones
+        document.querySelector('#total-apropiaciones').innerHTML = `${formatterPeso.format(element.totalApropiaciones)}`;
+
+        //total nómina
+        document.querySelector('#total-nomina').innerHTML = `${formatterPeso.format(element.totalNomina)}`;
+
+        document.getElementById('txtEditId').value = element.id;
+        document.getElementById('editar-empleado').dataset.id = element.id;
+        document.getElementById('eliminar-empleado').dataset.id = element.id;
+
+        permisosBotones();
     })
 }
 
@@ -286,6 +554,7 @@ const eliminarElemento = (arr, item) => {
     }
 }
 
+
 const btnAccion = e => {
     if (e.target.classList.contains('btnEditar')) {
         guardarInformacion.find(element => {
@@ -296,17 +565,26 @@ const btnAccion = e => {
                 document.getElementById('txtEditNumDoc').value = element.numDoc;
                 document.getElementById('txtEditDiasTrabajados').value = element.diasTrabajados;
                 document.getElementById('txtEditSueldo').value = element.sueldo;
+                document.getElementById('txtEditComisiones').value = element.comisiones;
+                document.getElementById('txtEditHorasDiurnas').value = element.hrsExtDiurnas;
+                document.getElementById('txtEditHorasNocturnas').value = element.hrsExtNocturnas;
+                document.getElementById('txtEditHrsDomDiu').value = element.hrsExtDominicalesDiu;
+                document.getElementById('txtEditHrsDomNoc').value = element.hrsExtDominicalesNoc;
+                document.getElementById('txtEditLibranza').value = element.libranzas;
+                document.getElementById('txtEditEmbargosJ').value = element.embargosJ;
+                document.getElementById('txtEditSindicatos').value = element.cuotaSindicatos;
+                document.getElementById('txtEditDeudas').value = element.deudasEmpleador;
+                document.getElementById('txtEditNivelArl').value = element.nivelArl;
             }
         })
     }
 
-    if (e.target.classList.contains('fa-trash')) {
+    if (e.target.classList.contains('btnEliminar')) {
         guardarInformacion.find(element => {
             if (element.id === parseInt(e.target.dataset.id)) {
-
                 swal({
-                    title: `Eliminar empleado ${element.nombre}`,
-                    text: `Esta seguro de eliminar el empleado ${element.nombre}`,
+                    title: `Eliminar empleado ${element.nombre} `,
+                    text: `Esta seguro de eliminar el empleado ${element.nombre} `,
                     icon: "warning",
                     buttons: true,
                     dangerMode: true,
