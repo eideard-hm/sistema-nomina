@@ -36,6 +36,9 @@ addEventListener('DOMContentLoaded', () => {
     }
     permisosBotones();
     mostrarVectores();
+    document.querySelector('#exportar-pdf').addEventListener('click', () => {
+        generarPdf();
+    })
 });
 
 const permisosBotones = () => {
@@ -44,12 +47,39 @@ const permisosBotones = () => {
         document.querySelector('.btn-editar').setAttribute('disabled', 'disabled');
         document.querySelector('.btn-eliminar').setAttribute('disabled', 'disabled');
         document.querySelector('.btn-nueva-nomina').setAttribute('disabled', 'disabled');
+        document.querySelector('#exportar-pdf').setAttribute('disabled', 'disabled');
     } else {
         document.querySelector('.btn-agregar').setAttribute('disabled', 'disabled');
         document.querySelector('.btn-editar').removeAttribute('disabled');
         document.querySelector('.btn-eliminar').removeAttribute('disabled');
         document.querySelector('.btn-nueva-nomina').removeAttribute('disabled');
+        document.querySelector('#exportar-pdf').removeAttribute('disabled');
     }
+}
+
+const generarPdf = () => {
+    const documentoAConvertir = document.querySelector('#elementos-exportar-pdf');
+    html2pdf()
+        .set({
+            margin: 0.5,
+            filename: 'Sistema de Nóminas.pdf',
+            image: {
+                type: 'jpeg',
+                quiality: 0.98
+            },
+            html2canvas: {
+                scale: 3,
+                letterRendering: true
+            },
+            jsPDF: {
+                unit: "in",
+                format: "a3",
+                orientation: 'Portrait'
+            }
+        })
+        .from(documentoAConvertir)
+        .save()
+        .catch(err => console.log(err));
 }
 
 const validarFormulario = (e, accion) => {
@@ -204,6 +234,7 @@ document.querySelector('.btn-nueva-nomina').addEventListener('click', () => {
     guardarInformacion.forEach(item => informacionNomina.push({ ...item }));
     localStorage.setItem('nomina-antigua', JSON.stringify(informacionNomina));
     guardarInformacion = [];
+    localStorage.removeItem('nomina')
     window.location.reload();
 })
 
@@ -225,15 +256,16 @@ const fcCargarVectores = (id, index, accion) => {
     let deudasEmpleador = parseFloat(document.getElementById(`txt${accion}Deudas`).value);
     let nivelArl = parseFloat(document.getElementById(`txt${accion}NivelArl`).value);
 
+    const minimo = 908526;
+    let aTransporte = 106454;
+    const uvt = 36308;
+    const horaOrdinaria = 3785.53;
     let salario = 0, salud = 0, pension = 0, totalDevengado = 0, totalDescuentos = 0,
         netoAPagar = 0, extrasDiurnas = 0, extrasNocturnas = 0, extrasDomiDiu = 0,
         extrasDomiNoc = 0;
-    let aTransporte = 106454;
-    const uvt = 36308;
-    let horaOrdinaria = 3785.53;
     let saludEmpleador = 0, pensionEmpleador = 0, arlEmpleador = 0, sena = 0, icbf = 0,
-        cajaCompensacion = 0, prima = 0, cesantias = 0, inCesantias = 0, vacaciones = 0, fondoSolidaridad,
-        retencionFuente;
+        cajaCompensacion = 0, prima = 0, cesantias = 0, inCesantias = 0, vacaciones = 0,
+        fondoSolidaridad = 0, retencionFuente = 0;
 
     if (campos.nombre === false || campos.apellidos === false || campos.numDoc === false
         || campos.diasTrabajados === false || campos.sueldo === false) {
@@ -273,18 +305,20 @@ const fcCargarVectores = (id, index, accion) => {
         salud = ((totalDevengado - aTransporte) * 0.04);
         pension = ((totalDevengado - aTransporte) * 0.04);
         //fondo de solidaridad
-        if (salario < (salario * 4)) {
-            fondoSolidaridad = 0;
-        } else if (salario >= (salario * 4) && salario < (salario * 16)) {
-            fondoSolidaridad = (totalDevengado * 1) / 100;
-        } else if (salario >= (salario * 16) && salario < (salario * 17)) {
-            fondoSolidaridad = (totalDevengado * 1.2) / 100;
-        } else if (salario >= (salario * 17) && salario < (salario * 18)) {
-            fondoSolidaridad = (totalDevengado * 1.4) / 100;
-        } else if (salario >= (salario * 18) && salario < (salario * 19)) {
-            fondoSolidaridad = (totalDevengado * 1.8) / 100;
-        } else if (salario > (salario * 20)) {
-            fondoSolidaridad = (totalDevengado * 2) / 100;
+        if (sueldo > (minimo * 4)) {
+            if (sueldo < (minimo * 4)) {
+                fondoSolidaridad = 0;
+            } else if (sueldo >= (minimo * 4) && sueldo < (minimo * 16)) {
+                fondoSolidaridad = (totalDevengado * 1) / 100;
+            } else if (sueldo >= (minimo * 16) && sueldo < (minimo * 17)) {
+                fondoSolidaridad = (totalDevengado * 1.2) / 100;
+            } else if (sueldo >= (minimo * 17) && sueldo < (minimo * 18)) {
+                fondoSolidaridad = (totalDevengado * 1.4) / 100;
+            } else if (sueldo >= (minimo * 18) && sueldo < (minimo * 19)) {
+                fondoSolidaridad = (totalDevengado * 1.8) / 100;
+            } else if (sueldo > (minimo * 20)) {
+                fondoSolidaridad = (totalDevengado * 2) / 100;
+            }
         }
 
         //retención en la fuente
@@ -303,8 +337,6 @@ const fcCargarVectores = (id, index, accion) => {
         } else if (totalDevengado > (uvt * 2300)) {
             retencionFuente = (totalDevengado * 39) / 100;
         }
-        console.log(fondoSolidaridad);
-        console.log(retencionFuente);
         totalDescuentos = (salud + pension + libranzas + embargosJ + cuotaSindicatos +
             deudasEmpleador + fondoSolidaridad + retencionFuente);
         /*
@@ -318,14 +350,14 @@ const fcCargarVectores = (id, index, accion) => {
         saludEmpleador = ((totalDevengado - aTransporte) * 0.085);
         pensionEmpleador = ((totalDevengado - aTransporte) * 0.12);
         arlEmpleador = ((totalDevengado - aTransporte) * (nivelArl / 100));
-        let totalSeguridadSoc = (saludEmpleador, pensionEmpleador, arlEmpleador);
+        let totalSeguridadSoc = (saludEmpleador + pensionEmpleador + arlEmpleador);
         /*
          * Aportes parafiscales
         */
         sena = ((totalDevengado - aTransporte) * 0.02);
         icbf = ((totalDevengado - aTransporte) * 0.03);
         cajaCompensacion = ((totalDevengado - aTransporte) * 0.04)
-        let totalParafiscales = (sena, icbf, arlEmpleador);
+        let totalParafiscales = (sena + icbf + cajaCompensacion);
         /*
           * Prestaciones sociales
         */
