@@ -14,3 +14,11 @@ body {
 .titulo {
     text-transform: uppercase;
 }
+
+.contenedor-tabla {
+    background-color: rgba(255, 255, 255, .7);
+    border-radius: 4px;
+    width: 95%;
+    margin: auto;
+    padding: 30px;
+}

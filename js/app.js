@@ -38,22 +38,48 @@ addEventListener('DOMContentLoaded', () => {
     mostrarVectores();
     document.querySelector('#exportar-pdf').addEventListener('click', () => {
         generarPdf();
-    })
+    });
 });
 
 const permisosBotones = () => {
+    // const numEmpleadosReg = document.getElementById('txtNumEmReg');
+    // if (parseInt(numEmpleadosReg.value) === null || parseInt(numEmpleadosReg.value) === undefined
+    //     || parseInt(numEmpleadosReg.value) === NaN) {
+    //     document.querySelector('.btn-agregar').removeAttribute('disabled');
+    //     console.log('Entre al primero')
+    // } else {
+    //     document.querySelector('.btn-agregar').setAttribute('disabled', 'disabled');
+    //     console.log('Entre al sengiudo')
+    // }
     if (guardarInformacion.length === 0) {
         document.querySelector('.btn-agregar').removeAttribute('disabled');
         document.querySelector('.btn-editar').setAttribute('disabled', 'disabled');
         document.querySelector('.btn-eliminar').setAttribute('disabled', 'disabled');
         document.querySelector('.btn-nueva-nomina').setAttribute('disabled', 'disabled');
         document.querySelector('#exportar-pdf').setAttribute('disabled', 'disabled');
-    } else {
+        document.querySelector('.nueva-nomina').setAttribute('disabled', 'disabled');
+    } //else if (guardarInformacion.length === parseInt(numEmpleadosReg.value)) {
+    //document.querySelector('#ver-nomina').removeAttribute('disabled');
+    //document.querySelector('#enlace-nomina').setAttribute('href', 'nomina.html');
+    //} 
+    else {
         document.querySelector('.btn-agregar').setAttribute('disabled', 'disabled');
         document.querySelector('.btn-editar').removeAttribute('disabled');
         document.querySelector('.btn-eliminar').removeAttribute('disabled');
         document.querySelector('.btn-nueva-nomina').removeAttribute('disabled');
         document.querySelector('#exportar-pdf').removeAttribute('disabled');
+        document.querySelector('.nueva-nomina').removeAttribute('disabled');
+        // numEmpleadosReg.setAttribute('type', 'hidden');
+    }
+    // $('#num-em-reg').modal("hide");//nos derigimos a la modal y lo ocultamos
+    // document.querySelector('#formNumEm').reset();
+    informacionNomina = JSON.parse(localStorage.getItem('nomina-antigua'));
+    if (informacionNomina.length === 0) {
+        document.querySelector('#ver-nomina').setAttribute('disabled', 'disabled');
+        document.querySelector('#enlace-nomina').setAttribute('href', '#');
+    } else {
+        document.querySelector('#ver-nomina').removeAttribute('disabled');
+        document.querySelector('#enlace-nomina').removeAttribute('disabled');
     }
 }
 
@@ -202,12 +228,12 @@ const validarFormulario = (e, accion) => {
 inputs.forEach(input => {
     // input.addEventListener('keyup', validarFormulario)
     input.addEventListener('blur', (e) => validarFormulario(e, 'Regis'));
-})
+});
 
 inputsEdit.forEach(input => {
     // input.addEventListener('keyup', validarFormulario)
     input.addEventListener('blur', (e) => validarFormulario(e, 'Edit'));
-})
+});
 
 form.addEventListener('submit', e => {
     e.preventDefault();
@@ -222,7 +248,12 @@ formEdit.addEventListener('submit', e => {
             fcCargarVectores(element.id, i, 'Edit');
         }
     });
-})
+});
+
+// document.querySelector('#formNumEm').addEventListener('submit', e => {
+//     e.preventDefault();
+//     permisosBotones();
+// });
 
 document.querySelectorAll('.btn-crud').forEach(item => {
     item.addEventListener('click', e => {
@@ -231,12 +262,84 @@ document.querySelectorAll('.btn-crud').forEach(item => {
 });
 
 document.querySelector('.btn-nueva-nomina').addEventListener('click', () => {
-    guardarInformacion.forEach(item => informacionNomina.push({ ...item }));
+    informacionNomina.push(guardarInformacion[0]);
     localStorage.setItem('nomina-antigua', JSON.stringify(informacionNomina));
     guardarInformacion = [];
-    localStorage.removeItem('nomina')
+    localStorage.removeItem('nomina');
+    swal("Empleado guardado correctamente!", `Se ha guardado de forma correcta el registro del empleado : )`, "success");
+    mostrarVectores();
+    document.querySelector('.btn-agregar').removeAttribute('disabled');
+    document.querySelector('.btn-editar').setAttribute('disabled', 'disabled');
+    document.querySelector('.btn-eliminar').setAttribute('disabled', 'disabled');
+    document.querySelector('.btn-nueva-nomina').setAttribute('disabled', 'disabled');
+    document.querySelector('#exportar-pdf').setAttribute('disabled', 'disabled');
+    document.querySelector('.nueva-nomina').setAttribute('disabled', 'disabled');
+
+    //datos personales
+    document.querySelector('#nombre-em').innerHTML = '';
+    document.querySelector('#apellidos-em').innerHTML = '';
+    document.querySelector('#numeroDoc-em').innerHTML = '';
+    document.querySelector('#dias-em').innerHTML = '';
+    document.querySelector('#sueldo-em').innerHTML = 0;
+
+    //devengado
+    document.querySelector('#salario').innerHTML = 0;
+    document.querySelector('#comisiones').innerHTML = 0;
+    document.querySelector('#hed').innerHTML = 0;
+    document.querySelector('#hen').innerHTML = 0;
+    document.querySelector('#hedd').innerHTML = 0;
+    document.querySelector('#hedn').innerHTML = 0;
+    document.querySelector('#aTrasn').innerHTML = 0;
+    document.querySelector('#totalDev').innerHTML = 0;
+
+    //deducidos
+    document.querySelector('#aporSalud').innerHTML = 0;
+    document.querySelector('#aporPension').innerHTML = 0;
+    document.querySelector('#libranza').innerHTML = 0;
+    document.querySelector('#embargos').innerHTML = 0;
+    document.querySelector('#cuotasSindi').innerHTML = 0;
+    document.querySelector('#deudas').innerHTML = 0;
+    document.querySelector('#total-deducido').innerHTML = 0;
+    document.querySelector('#fondo-solidaridad').innerHTML = 0;
+    document.querySelector('#retencion-fuente').innerHTML = 0;
+
+    //valor neto empleador
+    document.querySelector('#neto-a-pagar').innerHTML = 0;
+
+    //Seguridad social
+    document.querySelector('#saludEmpleador').innerHTML = 0;
+    document.querySelector('#pensionEmpleador').innerHTML = 0;
+    document.querySelector('#arlEmpleador').innerHTML = 0;
+    document.querySelector('#total-seguidad-social').innerHTML = 0;
+
+    //Aportes parafiscales
+    document.querySelector('#sena').innerHTML = 0;
+    document.querySelector('#icbf').innerHTML = 0;
+    document.querySelector('#cajaCompensacion').innerHTML = 0;
+    document.querySelector('#total-parafiscales').innerHTML = 0;
+
+    //Prestacione sociales
+    document.querySelector('#prima').innerHTML = 0;
+    document.querySelector('#cesantias').innerHTML = 0;
+    document.querySelector('#intCesantias').innerHTML = 0;
+    document.querySelector('#vacaciones').innerHTML = 0;
+    document.querySelector('#total-prestaciones').innerHTML = 0;
+
+    //total apropiaciones
+    document.querySelector('#total-apropiaciones').innerHTML = 0;
+
+    //total nómina
+    document.querySelector('#total-nomina').innerHTML = 0;
+});
+
+document.querySelector('.nueva-nomina').addEventListener('click', () => {
+    guardarInformacion = [];
+    informacionNomina = [];
+    localStorage.removeItem('nomina');
+    localStorage.removeItem('nomina-antigua');
+    mostrarVectores();
     window.location.reload();
-})
+});
 
 const fcCargarVectores = (id, index, accion) => {
     const nombre = document.getElementById(`txt${accion}Nombre`);
@@ -266,6 +369,7 @@ const fcCargarVectores = (id, index, accion) => {
     let saludEmpleador = 0, pensionEmpleador = 0, arlEmpleador = 0, sena = 0, icbf = 0,
         cajaCompensacion = 0, prima = 0, cesantias = 0, inCesantias = 0, vacaciones = 0,
         fondoSolidaridad = 0, retencionFuente = 0;
+
 
     if (campos.nombre === false || campos.apellidos === false || campos.numDoc === false
         || campos.diasTrabajados === false || campos.sueldo === false) {
@@ -585,7 +689,6 @@ const eliminarElemento = (arr, item) => {
         window.location.reload();
     }
 }
-
 
 const btnAccion = e => {
     if (e.target.classList.contains('btnEditar')) {

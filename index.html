@@ -30,7 +30,10 @@
           </li>
         </ul>
         <form class="d-flex">
-          <span class="badge bg-light text-dark" role="button">
+          <button class="badge bg-light text-dark" id="ver-nomina">
+            <a class="nav-link" href="nomina.html" id="enlace-nomina">Ver nómina</a>
+          </button>
+          <span class="badge bg-light text-dark ms-5" role="button">
             <a class="nav-link" href="login.html">Cerrrar sesión</a></span>
         </form>
       </div>
@@ -40,6 +43,10 @@
   <div class="container mt-2">
     <h1 class="text-center titulo">Sistema de calcular nóminas</h1>
     <hr>
+    <!-- <button type="button" class="btn btn-success my-3" data-bs-toggle="modal" data-bs-target="#num-em-reg"
+      id="num-reg-em" role="button">
+      # empleados registrar
+    </button> -->
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-warning my-3 btn-agregar" data-bs-toggle="modal"
       data-bs-target="#agregar_nomina">
@@ -58,6 +65,10 @@
     </button>
 
     <button type="button" class="btn btn-info my-3 btn-nueva-nomina">
+      Agregar a la nómina<i class="fas fa-plus ms-1"></i></span>
+    </button>
+
+    <button type="button" class="btn btn-secondary my-3 nueva-nomina">
       Nueva nómina<i class="fas fa-plus ms-1"></i></span>
     </button>
 
@@ -315,6 +326,28 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal -->
+  <!-- <div class="modal fade" id="num-em-reg" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-primary">
+          <h5 class="modal-title" id="staticBackdropLabel">Número de empleados a registrar en la nómina</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form class="row g-3" id="formNumEm">
+            <div class="col-md-12">
+              <label for="txtNumEmReg" class="form-label">Números empleados a Registrar:</label>
+              <input type="number" class="form-control" name="txtNumEmReg" id="txtNumEmReg" placeholder="5">
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar <i class="far fa-save ms-1"></i></button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div> -->
 
   <!-- Modal -->
   <div class="modal fade" id="agregar_nomina" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
