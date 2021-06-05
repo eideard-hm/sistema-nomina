@@ -43,10 +43,6 @@
   <div class="container mt-2">
     <h1 class="text-center titulo">Sistema de calcular nóminas</h1>
     <hr>
-    <!-- <button type="button" class="btn btn-success my-3" data-bs-toggle="modal" data-bs-target="#num-em-reg"
-      id="num-reg-em" role="button">
-      # empleados registrar
-    </button> -->
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-warning my-3 btn-agregar" data-bs-toggle="modal"
       data-bs-target="#agregar_nomina">
@@ -138,6 +134,10 @@
               <tr>
                 <th scope="row">Horas extras dominicales nocturnas</th>
                 <td id="hedn">0</td>
+              </tr>
+              <tr>
+                <th scope="row">Recargo nocturno</th>
+                <td id="recNoc">0</td>
               </tr>
               <tr>
                 <th scope="row">Auxilio de transporte</th>
@@ -328,28 +328,6 @@
   </div>
 
   <!-- Modal -->
-  <!-- <div class="modal fade" id="num-em-reg" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header bg-primary">
-          <h5 class="modal-title" id="staticBackdropLabel">Número de empleados a registrar en la nómina</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form class="row g-3" id="formNumEm">
-            <div class="col-md-12">
-              <label for="txtNumEmReg" class="form-label">Números empleados a Registrar:</label>
-              <input type="number" class="form-control" name="txtNumEmReg" id="txtNumEmReg" placeholder="5">
-            </div>
-            <button type="submit" class="btn btn-primary">Guardar <i class="far fa-save ms-1"></i></button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div> -->
-
-  <!-- Modal -->
   <div class="modal fade" id="agregar_nomina" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -412,6 +390,10 @@
               <label for="txtRegisHrsDomNoc" class="form-label">Horas dominicales Nocuturnas:</label>
               <input type="number" class="form-control" name="txtRegisHrsDomNoc" id="txtRegisHrsDomNoc" placeholder="8">
             </div>
+            <div class="col-md-12">
+              <label for="txtRegisRecNoc" class="form-label">Recargo nocturno:</label>
+              <input type="number" class="form-control" name="txtRegisRecNoc" id="txtRegisRecNoc" placeholder="8">
+            </div>
 
             <hr>
             <h6 class="text-center"><b>Deducciones</b></h6>
@@ -440,8 +422,13 @@
             <h6 class="text-center"><b>Seguridad social</b></h6>
             <hr>
             <div class="col-md-12">
-              <label for="txtRegisNivelArl" class="form-label">Nivel ARL:</label>
-              <input type="text" class="form-control" name="txtRegisNivelArl" id="txtRegisNivelArl" placeholder="0.522">
+              <select class="form-select" name="txtRegisNivelArl" id="txtRegisNivelArl">
+                <option value="1">Clase I</option>
+                <option value="2">Clase II</option>
+                <option value="3">Clase III</option>
+                <option value="4">Clase IV</option>
+                <option value="5">Clase V</option>
+              </select>
             </div>
 
             <button type="submit" class="btn btn-primary">Guardar <i class="far fa-save ms-1"></i></button>
@@ -516,6 +503,10 @@
               <label for="txtRegisHrsDomNoc" class="form-label">Horas dominicales Nocuturnas:</label>
               <input type="number" class="form-control" name="txtEditHrsDomNoc" id="txtEditHrsDomNoc" placeholder="8">
             </div>
+            <div class="col-md-12">
+              <label for="txtEditRecNoc" class="form-label">Recargo nocturno:</label>
+              <input type="number" class="form-control" name="txtEditRecNoc" id="txtEditRecNoc" placeholder="8">
+            </div>
 
             <hr>
             <h6 class="text-center"><b>Deducciones</b></h6>
@@ -543,8 +534,13 @@
             <h6 class="text-center"><b>Seguridad social</b></h6>
             <hr>
             <div class="col-md-12">
-              <label for="txtEditNivelArl" class="form-label">Nivel ARL:</label>
-              <input type="text" class="form-control" name="txtEditNivelArl" id="txtEditNivelArl" placeholder="0.522">
+              <select class="form-select" name="txtRegisNivelArl" id="txtRegisNivelArl">
+                <option value="1">Clase I</option>
+                <option value="2">Clase II</option>
+                <option value="3">Clase III</option>
+                <option value="4">Clase IV</option>
+                <option value="5">Clase V</option>
+              </select>
             </div>
 
             <button type="submit" class="btn btn-success">Guardar <i class="far fa-save ms-1"></i></button>

@@ -18,7 +18,12 @@ body {
 .contenedor-tabla {
     background-color: rgba(255, 255, 255, .7);
     border-radius: 4px;
-    width: 95%;
+    width: 100%;
     margin: auto;
     padding: 30px;
+}
+
+.contenedor-tabla #example {
+    width: 98%;
+    margin: auto;
 }

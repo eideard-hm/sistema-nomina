@@ -42,15 +42,6 @@ addEventListener('DOMContentLoaded', () => {
 });
 
 const permisosBotones = () => {
-    // const numEmpleadosReg = document.getElementById('txtNumEmReg');
-    // if (parseInt(numEmpleadosReg.value) === null || parseInt(numEmpleadosReg.value) === undefined
-    //     || parseInt(numEmpleadosReg.value) === NaN) {
-    //     document.querySelector('.btn-agregar').removeAttribute('disabled');
-    //     console.log('Entre al primero')
-    // } else {
-    //     document.querySelector('.btn-agregar').setAttribute('disabled', 'disabled');
-    //     console.log('Entre al sengiudo')
-    // }
     if (guardarInformacion.length === 0) {
         document.querySelector('.btn-agregar').removeAttribute('disabled');
         document.querySelector('.btn-editar').setAttribute('disabled', 'disabled');
@@ -58,28 +49,18 @@ const permisosBotones = () => {
         document.querySelector('.btn-nueva-nomina').setAttribute('disabled', 'disabled');
         document.querySelector('#exportar-pdf').setAttribute('disabled', 'disabled');
         document.querySelector('.nueva-nomina').setAttribute('disabled', 'disabled');
-    } //else if (guardarInformacion.length === parseInt(numEmpleadosReg.value)) {
-    //document.querySelector('#ver-nomina').removeAttribute('disabled');
-    //document.querySelector('#enlace-nomina').setAttribute('href', 'nomina.html');
-    //} 
-    else {
+    } else {
         document.querySelector('.btn-agregar').setAttribute('disabled', 'disabled');
         document.querySelector('.btn-editar').removeAttribute('disabled');
         document.querySelector('.btn-eliminar').removeAttribute('disabled');
         document.querySelector('.btn-nueva-nomina').removeAttribute('disabled');
         document.querySelector('#exportar-pdf').removeAttribute('disabled');
         document.querySelector('.nueva-nomina').removeAttribute('disabled');
-        // numEmpleadosReg.setAttribute('type', 'hidden');
     }
-    // $('#num-em-reg').modal("hide");//nos derigimos a la modal y lo ocultamos
-    // document.querySelector('#formNumEm').reset();
-    informacionNomina = JSON.parse(localStorage.getItem('nomina-antigua'));
     if (informacionNomina.length === 0) {
-        document.querySelector('#ver-nomina').setAttribute('disabled', 'disabled');
         document.querySelector('#enlace-nomina').setAttribute('href', '#');
     } else {
-        document.querySelector('#ver-nomina').removeAttribute('disabled');
-        document.querySelector('#enlace-nomina').removeAttribute('disabled');
+        document.querySelector('#enlace-nomina').setAttribute('href', 'nomina.html');
     }
 }
 
@@ -87,7 +68,7 @@ const generarPdf = () => {
     const documentoAConvertir = document.querySelector('#elementos-exportar-pdf');
     html2pdf()
         .set({
-            margin: 0.5,
+            margin: 0,
             filename: 'Sistema de Nóminas.pdf',
             image: {
                 type: 'jpeg',
@@ -100,7 +81,7 @@ const generarPdf = () => {
             jsPDF: {
                 unit: "in",
                 format: "a3",
-                orientation: 'Portrait'
+                orientation: 'landscape '
             }
         })
         .from(documentoAConvertir)
@@ -250,11 +231,6 @@ formEdit.addEventListener('submit', e => {
     });
 });
 
-// document.querySelector('#formNumEm').addEventListener('submit', e => {
-//     e.preventDefault();
-//     permisosBotones();
-// });
-
 document.querySelectorAll('.btn-crud').forEach(item => {
     item.addEventListener('click', e => {
         btnAccion(e);
@@ -330,6 +306,7 @@ document.querySelector('.btn-nueva-nomina').addEventListener('click', () => {
 
     //total nómina
     document.querySelector('#total-nomina').innerHTML = 0;
+    permisosBotones();
 });
 
 document.querySelector('.nueva-nomina').addEventListener('click', () => {
@@ -353,23 +330,23 @@ const fcCargarVectores = (id, index, accion) => {
     let hrsExtNocturnas = parseInt(document.getElementById(`txt${accion}HorasNocturnas`).value);
     let hrsExtDominicalesDiu = parseInt(document.getElementById(`txt${accion}HrsDomDiu`).value);
     let hrsExtDominicalesNoc = parseInt(document.getElementById(`txt${accion}HrsDomNoc`).value);
+    let hrsReacargoNoc = parseInt(document.getElementById(`txt${accion}RecNoc`).value);
     let libranzas = parseFloat(document.getElementById(`txt${accion}Libranza`).value);
     let embargosJ = parseFloat(document.getElementById(`txt${accion}EmbargosJ`).value);
     let cuotaSindicatos = parseFloat(document.getElementById(`txt${accion}Sindicatos`).value);
     let deudasEmpleador = parseFloat(document.getElementById(`txt${accion}Deudas`).value);
-    let nivelArl = parseFloat(document.getElementById(`txt${accion}NivelArl`).value);
+    let nivelArl = parseInt(document.getElementById(`txt${accion}NivelArl`).value);
 
     const minimo = 908526;
     let aTransporte = 106454;
     const uvt = 36308;
-    const horaOrdinaria = 3785.53;
     let salario = 0, salud = 0, pension = 0, totalDevengado = 0, totalDescuentos = 0,
         netoAPagar = 0, extrasDiurnas = 0, extrasNocturnas = 0, extrasDomiDiu = 0,
-        extrasDomiNoc = 0;
+        extrasDomiNoc = 0, recargoNocturno = 0;
     let saludEmpleador = 0, pensionEmpleador = 0, arlEmpleador = 0, sena = 0, icbf = 0,
         cajaCompensacion = 0, prima = 0, cesantias = 0, inCesantias = 0, vacaciones = 0,
         fondoSolidaridad = 0, retencionFuente = 0;
-
+    const horaOrdinaria = sueldo / 240;
 
     if (campos.nombre === false || campos.apellidos === false || campos.numDoc === false
         || campos.diasTrabajados === false || campos.sueldo === false) {
@@ -396,13 +373,14 @@ const fcCargarVectores = (id, index, accion) => {
           * Devengado 
         */
         salario = ((sueldo / 30) * diasTrabajados);
-        aTransporte = sueldo <= 1817052 ? aTransporte : aTransporte = 0;
+        aTransporte = sueldo <= (2 * minimo) ? ((aTransporte * diasTrabajados) / 30) : 0;
         extrasDiurnas = ((horaOrdinaria * 1.25) * hrsExtDiurnas);
         extrasNocturnas = ((horaOrdinaria * 1.75) * hrsExtNocturnas);
         extrasDomiDiu = ((horaOrdinaria * 2) * hrsExtDominicalesDiu);
         extrasDomiNoc = ((horaOrdinaria * 2.5) * hrsExtDominicalesNoc);
+        recargoNocturno = ((horaOrdinaria * 0.35) * hrsReacargoNoc);
         totalDevengado = (salario + aTransporte + extrasDiurnas + extrasNocturnas +
-            extrasDomiDiu + extrasDomiNoc);
+            extrasDomiDiu + extrasDomiNoc + recargoNocturno);
         /*
           *Deducido 
         */
@@ -413,33 +391,37 @@ const fcCargarVectores = (id, index, accion) => {
             if (sueldo < (minimo * 4)) {
                 fondoSolidaridad = 0;
             } else if (sueldo >= (minimo * 4) && sueldo < (minimo * 16)) {
-                fondoSolidaridad = (totalDevengado * 1) / 100;
+                fondoSolidaridad = ((totalDevengado - aTransporte) * 1) / 100;
             } else if (sueldo >= (minimo * 16) && sueldo < (minimo * 17)) {
-                fondoSolidaridad = (totalDevengado * 1.2) / 100;
+                fondoSolidaridad = ((totalDevengado - aTransporte) * 1.2) / 100;
             } else if (sueldo >= (minimo * 17) && sueldo < (minimo * 18)) {
-                fondoSolidaridad = (totalDevengado * 1.4) / 100;
+                fondoSolidaridad = ((totalDevengado - aTransporte) * 1.4) / 100;
             } else if (sueldo >= (minimo * 18) && sueldo < (minimo * 19)) {
-                fondoSolidaridad = (totalDevengado * 1.8) / 100;
+                fondoSolidaridad = ((totalDevengado - aTransporte) * 1.8) / 100;
             } else if (sueldo > (minimo * 20)) {
-                fondoSolidaridad = (totalDevengado * 2) / 100;
+                fondoSolidaridad = ((totalDevengado - aTransporte) * 2) / 100;
             }
         }
 
         //retención en la fuente
-        if (totalDevengado > (uvt * 0) && totalDevengado <= (uvt * 95)) {
+        let ingresoBase = totalDevengado - aTransporte - salud - pension - fondoSolidaridad;
+        //hallar el 75% del ingreso base
+        ingresoBase = ingresoBase * 0.75;
+        let numUvt = ingresoBase / uvt;
+        if (numUvt > 0 && numUvt <= 95) {
             retencionFuente = 0;
-        } else if (totalDevengado > (uvt * 95) && totalDevengado <= (uvt * 150)) {
-            retencionFuente = (totalDevengado * 19) / 100;
-        } else if (totalDevengado > (uvt * 150) && totalDevengado <= (uvt * 360)) {
-            retencionFuente = (totalDevengado * 28) / 100;
-        } else if (totalDevengado > (uvt * 360) && totalDevengado <= (uvt * 640)) {
-            retencionFuente = (totalDevengado * 33) / 100;
-        } else if (totalDevengado > (uvt * 640) && totalDevengado <= (uvt * 945)) {
-            retencionFuente = (totalDevengado * 35) / 100;
-        } else if (totalDevengado > (uvt * 945 && totalDevengado <= (uvt * 2300))) {
-            retencionFuente = (totalDevengado * 37) / 100;
-        } else if (totalDevengado > (uvt * 2300)) {
-            retencionFuente = (totalDevengado * 39) / 100;
+        } else if (numUvt > 95 && numUvt <= 150) {
+            retencionFuente = ((numUvt - 95) * 0.19) * uvt;
+        } else if (numUvt > 150 && numUvt <= 360) {
+            retencionFuente = ((numUvt - 150) * 0.28 + 10) * uvt;
+        } else if (numUvt > 360 && numUvt <= 640) {
+            retencionFuente = ((numUvt - 360) * 0.33 + 69) * uvt;
+        } else if (numUvt > 640 && numUvt <= 945) {
+            retencionFuente = ((numUvt - 640) * 0.35 + 162) * uvt;
+        } else if (numUvt > 945 && numUvt <= 2300) {
+            retencionFuente = ((numUvt - 945) * 0.37 + 268) * uvt;
+        } else if (numUvt > 2300) {
+            retencionFuente = ((numUvt - 2300) * 0.39 + 770) * uvt;
         }
         totalDescuentos = (salud + pension + libranzas + embargosJ + cuotaSindicatos +
             deudasEmpleador + fondoSolidaridad + retencionFuente);
@@ -453,7 +435,18 @@ const fcCargarVectores = (id, index, accion) => {
         */
         saludEmpleador = ((totalDevengado - aTransporte) * 0.085);
         pensionEmpleador = ((totalDevengado - aTransporte) * 0.12);
-        arlEmpleador = ((totalDevengado - aTransporte) * (nivelArl / 100));
+        if (nivelArl === 1) {
+            arlEmpleador = ((totalDevengado - aTransporte) * (0.522 / 100));
+        } else if (nivelArl === 2) {
+            arlEmpleador = ((totalDevengado - aTransporte) * (1.044 / 100));
+        } else if (nivelArl === 3) {
+            arlEmpleador = ((totalDevengado - aTransporte) * (2.436 / 100));
+        } else if (nivelArl === 4) {
+            arlEmpleador = ((totalDevengado - aTransporte) * (4.350 / 100));
+        } else if (nivelArl === 5) {
+            arlEmpleador = ((totalDevengado - aTransporte) * (6.960 / 100));
+        }
+
         let totalSeguridadSoc = (saludEmpleador + pensionEmpleador + arlEmpleador);
         /*
          * Aportes parafiscales
@@ -465,10 +458,10 @@ const fcCargarVectores = (id, index, accion) => {
         /*
           * Prestaciones sociales
         */
-        prima = ((totalDevengado * diasTrabajados) / 360)
-        cesantias = ((totalDevengado * diasTrabajados) / 360)
-        inCesantias = ((cesantias * diasTrabajados * 0.12) / 360);
-        vacaciones = ((salario * diasTrabajados) / 720);
+        prima = (totalDevengado * (8.33 / 100));
+        cesantias = (totalDevengado * (8.33 / 100))
+        inCesantias = (cesantias * (1 / 100));
+        vacaciones = ((totalDevengado - aTransporte) * (4.17 / 100));
         let totalPrestaciones = prima + cesantias + inCesantias + vacaciones;
         /*
           * Total nómina
@@ -494,6 +487,7 @@ const fcCargarVectores = (id, index, accion) => {
                 extrasNocturnas,
                 extrasDomiDiu,
                 extrasDomiNoc,
+                recargoNocturno,
                 aTransporte,
                 totalDevengado,
                 salud,
@@ -551,6 +545,7 @@ const fcCargarVectores = (id, index, accion) => {
                 extrasNocturnas,
                 extrasDomiDiu,
                 extrasDomiNoc,
+                recargoNocturno,
                 aTransporte,
                 totalDevengado,
                 salud,
@@ -627,6 +622,7 @@ const mostrarVectores = () => {
         document.querySelector('#hen').innerHTML = `${formatterPeso.format(element.extrasNocturnas)}`;
         document.querySelector('#hedd').innerHTML = `${formatterPeso.format(element.extrasDomiDiu)}`;
         document.querySelector('#hedn').innerHTML = `${formatterPeso.format(element.extrasDomiNoc)}`;
+        document.querySelector('#recNoc').innerHTML = `${formatterPeso.format(element.recargoNocturno)}`;
         document.querySelector('#aTrasn').innerHTML = `${formatterPeso.format(element.aTransporte)}`;
         document.querySelector('#totalDev').innerHTML = `${formatterPeso.format(element.totalDevengado)}`;
 
@@ -705,6 +701,7 @@ const btnAccion = e => {
                 document.getElementById('txtEditHorasNocturnas').value = element.hrsExtNocturnas;
                 document.getElementById('txtEditHrsDomDiu').value = element.hrsExtDominicalesDiu;
                 document.getElementById('txtEditHrsDomNoc').value = element.hrsExtDominicalesNoc;
+                document.getElementById('txtEditRecNoc').value = element.recargoNocturno;
                 document.getElementById('txtEditLibranza').value = element.libranzas;
                 document.getElementById('txtEditEmbargosJ').value = element.embargosJ;
                 document.getElementById('txtEditSindicatos').value = element.cuotaSindicatos;
