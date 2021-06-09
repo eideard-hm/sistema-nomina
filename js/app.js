@@ -81,7 +81,7 @@ const generarPdf = () => {
             jsPDF: {
                 unit: "in",
                 format: "a3",
-                orientation: 'landscape '
+                orientation: 'landscape'
             }
         })
         .from(documentoAConvertir)
