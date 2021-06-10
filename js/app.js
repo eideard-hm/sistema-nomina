@@ -391,20 +391,20 @@ const fcCargarVectores = (id, index, accion) => {
             if (sueldo < (minimo * 4)) {
                 fondoSolidaridad = 0;
             } else if (sueldo >= (minimo * 4) && sueldo < (minimo * 16)) {
-                fondoSolidaridad = ((totalDevengado - aTransporte) * 1) / 100;
+                fondoSolidaridad = (totalDevengado * 1) / 100;
             } else if (sueldo >= (minimo * 16) && sueldo < (minimo * 17)) {
-                fondoSolidaridad = ((totalDevengado - aTransporte) * 1.2) / 100;
+                fondoSolidaridad = (totalDevengado * 1.2) / 100;
             } else if (sueldo >= (minimo * 17) && sueldo < (minimo * 18)) {
-                fondoSolidaridad = ((totalDevengado - aTransporte) * 1.4) / 100;
+                fondoSolidaridad = (totalDevengado * 1.4) / 100;
             } else if (sueldo >= (minimo * 18) && sueldo < (minimo * 19)) {
-                fondoSolidaridad = ((totalDevengado - aTransporte) * 1.8) / 100;
+                fondoSolidaridad = (totalDevengado * 1.8) / 100;
             } else if (sueldo > (minimo * 20)) {
-                fondoSolidaridad = ((totalDevengado - aTransporte) * 2) / 100;
+                fondoSolidaridad = (totalDevengado * 2) / 100;
             }
         }
 
         //retención en la fuente
-        let ingresoBase = totalDevengado - aTransporte - salud - pension - fondoSolidaridad;
+        let ingresoBase = totalDevengado - salud - pension - fondoSolidaridad;
         //hallar el 75% del ingreso base
         ingresoBase = ingresoBase * 0.75;
         let numUvt = ingresoBase / uvt;
@@ -425,10 +425,6 @@ const fcCargarVectores = (id, index, accion) => {
         }
         totalDescuentos = (salud + pension + libranzas + embargosJ + cuotaSindicatos +
             deudasEmpleador + fondoSolidaridad + retencionFuente);
-        /*
-          * valor neto a pargar al empleado
-        */
-        netoAPagar = (totalDevengado - totalDescuentos);
 
         /*
          * Valores a pagar por el empleador
@@ -464,13 +460,17 @@ const fcCargarVectores = (id, index, accion) => {
         vacaciones = ((totalDevengado - aTransporte) * (4.17 / 100));
         let totalPrestaciones = prima + cesantias + inCesantias + vacaciones;
         /*
-          * Total nómina
+          * valor neto a pargar al empleado
+        */
+        netoAPagar = (totalDevengado + totalPrestaciones - totalDescuentos);
+        /*
+          * Total apropiaciones
         */
         let totalApropiaciones = totalSeguridadSoc + totalParafiscales + totalPrestaciones;
         /*
           * Total nómina
         */
-        let totalNomina = totalDevengado + totalSeguridadSoc + totalParafiscales + totalPrestaciones;
+        let totalNomina = totalDevengado + totalParafiscales + totalPrestaciones - totalDescuentos;
 
         if (accion === 'Regis') {
             //crear el objeto que vamos a almacenar
@@ -483,6 +483,11 @@ const fcCargarVectores = (id, index, accion) => {
                 sueldo,
                 salario,
                 comisiones,
+                hrsExtDiurnas,
+                hrsExtNocturnas,
+                hrsExtDominicalesDiu,
+                hrsExtDominicalesNoc,
+                hrsReacargoNoc,
                 extrasDiurnas,
                 extrasNocturnas,
                 extrasDomiDiu,
@@ -515,10 +520,6 @@ const fcCargarVectores = (id, index, accion) => {
                 totalPrestaciones,
                 totalApropiaciones,
                 totalNomina,
-                hrsExtDiurnas,
-                hrsExtNocturnas,
-                hrsExtDominicalesDiu,
-                hrsExtDominicalesNoc,
                 nivelArl
             }
             //vamos a insertar los valores dentro del arreglo 
@@ -541,6 +542,11 @@ const fcCargarVectores = (id, index, accion) => {
                 sueldo,
                 salario,
                 comisiones,
+                hrsExtDiurnas,
+                hrsExtNocturnas,
+                hrsExtDominicalesDiu,
+                hrsExtDominicalesNoc,
+                hrsReacargoNoc,
                 extrasDiurnas,
                 extrasNocturnas,
                 extrasDomiDiu,
@@ -573,10 +579,6 @@ const fcCargarVectores = (id, index, accion) => {
                 totalPrestaciones,
                 totalApropiaciones,
                 totalNomina,
-                hrsExtDiurnas,
-                hrsExtNocturnas,
-                hrsExtDominicalesDiu,
-                hrsExtDominicalesNoc,
                 nivelArl
             }
             //vamos a insertar los valores dentro del arreglo 
@@ -701,7 +703,7 @@ const btnAccion = e => {
                 document.getElementById('txtEditHorasNocturnas').value = element.hrsExtNocturnas;
                 document.getElementById('txtEditHrsDomDiu').value = element.hrsExtDominicalesDiu;
                 document.getElementById('txtEditHrsDomNoc').value = element.hrsExtDominicalesNoc;
-                document.getElementById('txtEditRecNoc').value = element.recargoNocturno;
+                document.getElementById('txtEditRecNoc').value = element.hrsReacargoNoc;
                 document.getElementById('txtEditLibranza').value = element.libranzas;
                 document.getElementById('txtEditEmbargosJ').value = element.embargosJ;
                 document.getElementById('txtEditSindicatos').value = element.cuotaSindicatos;
