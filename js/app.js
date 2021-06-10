@@ -470,7 +470,7 @@ const fcCargarVectores = (id, index, accion) => {
         /*
           * Total nómina
         */
-        let totalNomina = totalDevengado + totalParafiscales + totalPrestaciones - totalDescuentos;
+        let totalNomina = totalDevengado + totalSeguridadSoc + totalParafiscales + totalPrestaciones;
 
         if (accion === 'Regis') {
             //crear el objeto que vamos a almacenar
